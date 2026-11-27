@@ -54,9 +54,10 @@
       margin-bottom: 18px;
     }
 
+    /* 各2ポイント相当拡大 */
     .brand-title {
       margin: 0;
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
       letter-spacing: 0.02em;
       display: flex;
@@ -67,7 +68,7 @@
 
     .brand-subtitle {
       margin: 8px 0 0;
-      font-size: 16px;
+      font-size: 18px;
       color: #334155;
       font-weight: 700;
     }
@@ -241,12 +242,6 @@
       background-color: var(--error-bg);
       border: 1px solid var(--error-border);
       color: var(--error-text);
-    }
-
-    .message-info {
-      background-color: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e40af;
     }
 
     .register-done-banner {
@@ -443,15 +438,11 @@
       loginMessage.style.display = "none";
       loginMessage.textContent = "";
       if (!loginSelect.value) {
-        loginMessage.className = "message-box message-error";
         loginMessage.style.display = "block";
         loginMessage.textContent = "お名前を選択してからボタンを押してください。";
         return;
       }
-      const selectedName = loginSelect.options[loginSelect.selectedIndex].text;
-      loginMessage.className = "message-box message-info";
-      loginMessage.style.display = "block";
-      loginMessage.textContent = selectedName + " さんの認証フロー呼び出し位置です（モック）。";
+      /* ここに本番用の認証フロー呼び出しを組み込みます */
     });
 
     btnDoRegister.addEventListener("click", () => {

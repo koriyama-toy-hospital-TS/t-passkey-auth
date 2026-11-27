@@ -49,7 +49,7 @@
       max-width: 420px;
     }
 
-    /* 下のカード横幅（app-shell幅）いっぱいに合わせた共通ヘッダー */
+    /* 3画面共通ヘッダー（SVG鍵アイコン＋カード幅フィット） */
     .brand-header {
       width: 100%;
       text-align: center;
@@ -61,15 +61,34 @@
 
     .brand-title {
       margin: 0;
-      font-size: clamp(30px, 8.6vw, 35px);
+      font-size: clamp(28px, 8.2vw, 34px);
       font-weight: 800;
       letter-spacing: 0.01em;
       line-height: 1.2;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       white-space: nowrap;
+    }
+
+    .key-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #fbbf24;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.16);
+    }
+
+    .key-icon {
+      width: 20px;
+      height: 20px;
+      display: block;
     }
 
     .brand-subtitle {
@@ -283,7 +302,17 @@
 <body>
   <div class="app-shell">
     <header class="brand-header">
-      <h1 class="brand-title"><span>🔑</span><span>T パスキー認証</span></h1>
+      <h1 class="brand-title">
+        <span class="key-badge" aria-hidden="true">
+          <svg class="key-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="7.5" cy="15.5" r="4.5" />
+            <path d="M10.85 12.15L20 3" />
+            <path d="M17 6l2 2" />
+            <path d="M14.5 8.5l2 2" />
+          </svg>
+        </span>
+        <span>T パスキー認証</span>
+      </h1>
       <p class="brand-subtitle">郡山おもちゃの病院 業務システム</p>
     </header>
 

@@ -49,28 +49,37 @@
       max-width: 420px;
     }
 
-    /* 3画面共通ヘッダー（さらに2ポイント相当拡大） */
+    /* 下のカード横幅（app-shell幅）いっぱいに合わせた共通ヘッダー */
     .brand-header {
+      width: 100%;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid transparent;
+      border-image: linear-gradient(90deg, var(--primary), var(--register)) 1;
     }
 
     .brand-title {
       margin: 0;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-size: clamp(30px, 8.6vw, 35px);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      white-space: nowrap;
     }
 
     .brand-subtitle {
       margin: 8px 0 0;
-      font-size: 20px;
-      color: #334155;
-      font-weight: 700;
+      font-size: clamp(19px, 5.5vw, 23px);
+      color: #1e293b;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+      white-space: nowrap;
     }
 
     .card {

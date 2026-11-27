@@ -1,5 +1,3 @@
-# t-passkey-auth
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>

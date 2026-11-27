@@ -12,16 +12,13 @@
       --text-sub: #64748b;
       --border-soft: #cbd5e1;
 
-      /* 単独の共通認証玄関として落ち着いた中立カラーを採用 */
       --primary: #1d4ed8;
       --primary-hover: #1e40af;
 
       --register: #15803d;
       --register-hover: #166534;
 
-      --success-bg: #f0fdf4;
-      --success-border: #86efac;
-      --success-text: #166534;
+      --result-red: #dc2626;
 
       --error-bg: #fef2f2;
       --error-border: #fca5a5;
@@ -69,11 +66,12 @@
       gap: 8px;
     }
 
+    /* ① 2ポイント大きく＋太字に変更 */
     .brand-subtitle {
-      margin: 6px 0 0;
-      font-size: 14px;
-      color: var(--text-sub);
-      font-weight: 600;
+      margin: 8px 0 0;
+      font-size: 16px;
+      color: #334155;
+      font-weight: 700;
     }
 
     /* メインカード */
@@ -104,10 +102,29 @@
       color: var(--register);
     }
 
+    .badge-result {
+      background-color: #fef2f2;
+      color: var(--result-red);
+    }
+
+    /* ② 目立つ見出し（括弧付き＋アンダーライン） */
     .screen-heading {
-      margin: 0 0 8px;
-      font-size: 19px;
-      font-weight: 700;
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 800;
+      padding-bottom: 6px;
+      border-bottom: 3px solid var(--primary);
+      display: inline-block;
+    }
+
+    .heading-register {
+      border-bottom-color: var(--register);
+    }
+
+    /* ③ 「登録の結果」赤字・括弧付き＋アンダーライン */
+    .heading-result-red {
+      color: var(--result-red);
+      border-bottom-color: var(--result-red);
     }
 
     .screen-note {
@@ -144,7 +161,7 @@
       border-color: var(--primary);
     }
 
-    /* ボタン共通（スマホ親指押しやすい高さ） */
+    /* ボタン共通 */
     .btn {
       width: 100%;
       min-height: 56px;
@@ -214,7 +231,7 @@
       text-decoration: underline;
     }
 
-    /* 下部エリア（ログイン画面からの新規登録誘導） */
+    /* 下部エリア */
     .sub-action-area {
       margin-top: 20px;
       text-align: center;
@@ -226,7 +243,7 @@
       margin: 0 0 4px;
     }
 
-    /* メッセージ表示（通常は非表示） */
+    /* エラーメッセージ表示 */
     .message-box {
       display: none;
       margin-top: 16px;
@@ -241,32 +258,40 @@
       color: var(--error-text);
     }
 
-    .message-success {
-      background-color: var(--success-bg);
-      border: 1px solid var(--success-border);
-      color: var(--success-text);
+    .message-info {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+
+    /* ④ 上の緑ボタンと同等の見た目にした完了メッセージ枠 */
+    .register-done-banner {
+      display: none;
+      margin-top: 14px;
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background-color: var(--register);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.4;
     }
 
     .after-register-box {
       display: none;
       margin-top: 16px;
       padding-top: 14px;
-      border-top: 1px dashed #bbf7d0;
-    }
-
-    .after-register-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--success-text);
-      margin: 0 0 10px;
-      text-align: center;
+      border-top: 1px dashed #cbd5e1;
     }
 
     .hidden {
       display: none;
     }
 
-    /* 試作確認用の小さな操作バー（本番画面からは外す前提） */
+    /* 見た目確認用モックバー（本番では削除） */
     .mock-bar {
       margin-top: 24px;
       padding: 10px 12px;
@@ -300,14 +325,15 @@
     <!-- ① メイン画面：ログイン -->
     <section id="screen-login" class="card" aria-label="ログイン画面">
       <span class="screen-badge badge-login">ログイン</span>
-      <h2 class="screen-heading">パスキーでログイン</h2>
+      <div>
+        <h2 class="screen-heading">【 パスキーでログイン 】</h2>
+      </div>
       <p class="screen-note">お名前を選んでから、指紋または顔認証を押してください。</p>
 
       <div class="field-group">
         <label for="login-member-select" class="field-label">お名前を選択してください</label>
         <select id="login-member-select" class="select-box">
           <option value="">▼ 選択してください</option>
-          <!-- 画面表示は氏名のみ・valueに内部IDを持たせる想定 -->
           <option value="internal_id_001">佐藤 太郎</option>
           <option value="internal_id_002">鈴木 花子</option>
           <option value="internal_id_003">高橋 一郎</option>
@@ -331,11 +357,14 @@
 
     <!-- ② サブ画面：初回パスキー登録 -->
     <section id="screen-register" class="card hidden" aria-label="パスキー新規登録画面">
-      <span class="screen-badge badge-register">初回・端末登録</span>
-      <h2 class="screen-heading">この端末にパスキーを登録</h2>
-      <p class="screen-note">あらかじめ登録されたお名前を選び、端末の生体認証で鍵を作成します。</p>
+      <span id="register-badge" class="screen-badge badge-register">初回・端末登録</span>
+      <div>
+        <!-- 通常時は緑アンダーライン、完了時は赤字「【 登録の結果 】」へ入れ替え -->
+        <h2 id="register-heading" class="screen-heading heading-register">【 この端末にパスキーを登録 】</h2>
+      </div>
+      <p id="register-note" class="screen-note">あらかじめ登録されたお名前を選び、端末の生体認証で鍵を作成します。</p>
 
-      <div class="field-group">
+      <div id="register-select-group" class="field-group">
         <label for="register-member-select" class="field-label">ご自身のお名前を選択してください</label>
         <select id="register-member-select" class="select-box">
           <option value="">▼ 選択してください</option>
@@ -346,14 +375,17 @@
       </div>
 
       <button type="button" id="btn-do-register" class="btn btn-register">
-        <span>📲</span><span>この端末にパスキーを登録</span>
+        <span id="btn-do-register-icon">📲</span>
+        <span id="btn-do-register-label">この端末にパスキーを登録</span>
       </button>
 
-      <div id="register-message" class="message-box"></div>
+      <div id="register-error-message" class="message-box message-error"></div>
+
+      <!-- ④ 登録完了後に上の緑ボタンと同等の見た目で表示 -->
+      <div id="register-done-banner" class="register-done-banner"></div>
 
       <!-- 登録完了後：選択したお名前のままログインへ進める動線 -->
       <div id="after-register-area" class="after-register-box">
-        <p id="after-register-text" class="after-register-text">登録が完了しました！</p>
         <button type="button" id="btn-login-now" class="btn btn-primary">
           <span>👆</span><span>このままログインする</span>
         </button>
@@ -382,16 +414,44 @@
     const registerSelect = document.getElementById("register-member-select");
 
     const loginMessage = document.getElementById("login-message");
-    const registerMessage = document.getElementById("register-message");
+    const registerErrorMessage = document.getElementById("register-error-message");
+
+    const registerBadge = document.getElementById("register-badge");
+    const registerHeading = document.getElementById("register-heading");
+    const registerNote = document.getElementById("register-note");
+    const registerSelectGroup = document.getElementById("register-select-group");
+
+    const btnDoRegisterIcon = document.getElementById("btn-do-register-icon");
+    const btnDoRegisterLabel = document.getElementById("btn-do-register-label");
+    const registerDoneBanner = document.getElementById("register-done-banner");
     const afterRegisterArea = document.getElementById("after-register-area");
-    const afterRegisterText = document.getElementById("after-register-text");
+
+    function resetRegisterScreenState() {
+      registerBadge.textContent = "初回・端末登録";
+      registerBadge.className = "screen-badge badge-register";
+
+      registerHeading.textContent = "【 この端末にパスキーを登録 】";
+      registerHeading.className = "screen-heading heading-register";
+
+      registerNote.style.display = "block";
+      registerSelectGroup.style.display = "block";
+
+      btnDoRegisterIcon.textContent = "📲";
+      btnDoRegisterLabel.textContent = "この端末にパスキーを登録";
+
+      registerErrorMessage.style.display = "none";
+      registerErrorMessage.textContent = "";
+
+      registerDoneBanner.style.display = "none";
+      registerDoneBanner.textContent = "";
+
+      afterRegisterArea.style.display = "none";
+    }
 
     function clearMessages() {
       loginMessage.style.display = "none";
       loginMessage.textContent = "";
-      registerMessage.style.display = "none";
-      registerMessage.textContent = "";
-      afterRegisterArea.style.display = "none";
+      resetRegisterScreenState();
     }
 
     function showLoginScreen(preselectedInternalId = "") {
@@ -407,7 +467,6 @@
 
     function showRegisterScreen() {
       clearMessages();
-      // ログイン側で選んでいた氏名があれば引き継ぎ（任意）
       if (loginSelect.value && !registerSelect.value) {
         registerSelect.value = loginSelect.value;
       }
@@ -422,10 +481,24 @@
         registerSelect.value = "internal_id_001";
       }
       const selectedName = registerSelect.options[registerSelect.selectedIndex].text;
-      registerMessage.className = "message-box message-success";
-      registerMessage.style.display = "block";
-      registerMessage.textContent = selectedName + " さんのパスキー登録が完了しました（モック表示）。";
-      afterRegisterText.textContent = selectedName + " さんの準備ができました";
+
+      /* ③ 見出しを赤字「【 登録の結果 】」に入れ替え（元の「この端末にパスキーを登録」は消す） */
+      registerBadge.textContent = "登録完了";
+      registerBadge.className = "screen-badge badge-result";
+
+      registerHeading.textContent = "【 登録の結果 】";
+      registerHeading.className = "screen-heading heading-result-red";
+
+      registerNote.style.display = "none";
+      registerSelectGroup.style.display = "none";
+
+      /* ④ 緑ボタンの文字変更＋下の完了表示を上の緑と同等のスタイルに揃える */
+      btnDoRegisterIcon.textContent = "✅";
+      btnDoRegisterLabel.textContent = "この端末にパスキーの登録を完了";
+
+      registerDoneBanner.textContent = selectedName + " さんのパスキー登録が完了しました";
+      registerDoneBanner.style.display = "block";
+
       afterRegisterArea.style.display = "block";
     }
 
@@ -433,7 +506,8 @@
     document.getElementById("btn-back-login").addEventListener("click", () => showLoginScreen());
 
     document.getElementById("btn-do-login").addEventListener("click", () => {
-      clearMessages();
+      loginMessage.style.display = "none";
+      loginMessage.textContent = "";
       if (!loginSelect.value) {
         loginMessage.className = "message-box message-error";
         loginMessage.style.display = "block";
@@ -441,17 +515,17 @@
         return;
       }
       const selectedName = loginSelect.options[loginSelect.selectedIndex].text;
-      loginMessage.className = "message-box message-success";
+      loginMessage.className = "message-box message-info";
       loginMessage.style.display = "block";
       loginMessage.textContent = selectedName + " さん（内部IDは裏側で処理）の認証フロー呼び出し位置です（モック）。";
     });
 
     document.getElementById("btn-do-register").addEventListener("click", () => {
-      clearMessages();
+      registerErrorMessage.style.display = "none";
+      registerErrorMessage.textContent = "";
       if (!registerSelect.value) {
-        registerMessage.className = "message-box message-error";
-        registerMessage.style.display = "block";
-        registerMessage.textContent = "ご自身のお名前を選択してからボタンを押してください。";
+        registerErrorMessage.style.display = "block";
+        registerErrorMessage.textContent = "ご自身のお名前を選択してからボタンを押してください。";
         return;
       }
       simulateRegisterDone();
@@ -462,7 +536,7 @@
       showLoginScreen(targetId);
       const selectedName = loginSelect.options[loginSelect.selectedIndex]?.text || "";
       if (selectedName) {
-        loginMessage.className = "message-box message-success";
+        loginMessage.className = "message-box message-info";
         loginMessage.style.display = "block";
         loginMessage.textContent = selectedName + " さんを選択したままログイン画面へ移動しました。「指紋・顔認証でログイン」を押してください。";
       }

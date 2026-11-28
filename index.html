@@ -20,6 +20,10 @@
 
       --result-red: #dc2626;
 
+      --warn-bg: #fffbeb;
+      --warn-border: #fcd34d;
+      --warn-text: #92400e;
+
       --error-bg: #fef2f2;
       --error-border: #fca5a5;
       --error-text: #991b1b;
@@ -49,7 +53,7 @@
       max-width: 420px;
     }
 
-    /* 3画面共通ヘッダー（顔認証風アイコン組み込み版） */
+    /* 3画面共通ヘッダー */
     .brand-header {
       width: 100%;
       text-align: center;
@@ -164,6 +168,20 @@
 
     .select-box:focus {
       border-color: var(--primary);
+    }
+
+    /* 案A：登録済み構成員選択時の注意枠（複数端末追加許可の案内） */
+    .message-warn {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+      background-color: var(--warn-bg);
+      border: 1.5px solid var(--warn-border);
+      color: var(--warn-text);
     }
 
     .btn {
@@ -292,12 +310,10 @@
     <header class="brand-header">
       <h1 class="brand-title">
         <svg class="face-icon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <!-- 四隅のグレーフレーム -->
           <path d="M12 4H6C4.89543 4 4 4.89543 4 6V12" stroke="#64748b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M28 4H34C35.1046 4 36 4.89543 36 6V12" stroke="#64748b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M12 36H6C4.89543 36 4 35.1046 4 34V28" stroke="#64748b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M28 36H34C35.1046 36 36 35.1046 36 34V28" stroke="#64748b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
-          <!-- 青の目・鼻・口 -->
           <line x1="13" y1="12" x2="13" y2="16.5" stroke="#1d4ed8" stroke-width="2.6" stroke-linecap="round" />
           <line x1="27" y1="12" x2="27" y2="16.5" stroke="#1d4ed8" stroke-width="2.6" stroke-linecap="round" />
           <path d="M20.5 13.5L18.5 22.5H21.5" stroke="#1d4ed8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -308,7 +324,7 @@
       <p class="brand-subtitle">郡山おもちゃの病院 業務システム</p>
     </header>
 
-    <!-- ログイン画面 -->
+    <!-- ① ログイン画面 -->
     <section id="screen-login" class="card" aria-label="ログイン画面">
       <span class="screen-badge badge-login">ログイン</span>
       <div>
@@ -339,7 +355,7 @@
       </button>
     </div>
 
-    <!-- 初回パスキー登録画面 -->
+    <!-- ② 初回・追加端末 パスキー登録画面 -->
     <section id="screen-register" class="card hidden" aria-label="パスキー新規登録画面">
       <span id="register-badge" class="screen-badge badge-register">初回・端末登録</span>
       <div>
@@ -356,12 +372,16 @@
         </select>
       </div>
 
+      <!-- 案A：すでにパスキー登録済みの構成員を選んだときの警告メッセージ（追加登録は許可） -->
+      <div id="register-duplicate-warn" class="message-warn" role="status"></div>
+
       <button type="button" id="btn-do-register" class="btn btn-register">
         <span>📲</span><span>この端末にパスキーを登録</span>
       </button>
 
       <div id="register-error-message" class="message-box message-error"></div>
 
+      <!-- ③ 登録完了表示 -->
       <div id="register-done-banner" class="register-done-banner"></div>
 
       <div id="after-register-area" class="after-register-box">
@@ -370,6 +390,7 @@
         </button>
       </div>
 
+      <!-- 登録前のみ表示し、完了時は非表示にする -->
       <button type="button" id="btn-back-login" class="btn-ghost-back">
         ← ログイン画面に戻る
       </button>
@@ -385,14 +406,50 @@
     const registerSelect = document.getElementById("register-member-select");
 
     const loginMessage = document.getElementById("login-message");
+    const registerWarnMessage = document.getElementById("register-duplicate-warn");
     const registerErrorMessage = document.getElementById("register-error-message");
 
     const registerBadge = document.getElementById("register-badge");
     const registerHeading = document.getElementById("register-heading");
     const registerSelectGroup = document.getElementById("register-select-group");
     const btnDoRegister = document.getElementById("btn-do-register");
+    const btnBackLogin = document.getElementById("btn-back-login");
     const registerDoneBanner = document.getElementById("register-done-banner");
     const afterRegisterArea = document.getElementById("after-register-area");
+
+    /* 仮の登録済みデータ（本番ではWorkers/GASから取得する登録済み端末数に置き換えます） */
+    const registeredDeviceCountByMember = {
+      internal_id_001: 1,
+      internal_id_002: 0,
+      internal_id_003: 0
+    };
+
+    function updateDuplicateWarning() {
+      const selectedId = registerSelect.value;
+      registerErrorMessage.style.display = "none";
+      registerErrorMessage.textContent = "";
+
+      if (!selectedId) {
+        registerWarnMessage.style.display = "none";
+        registerWarnMessage.textContent = "";
+        return;
+      }
+
+      const count = registeredDeviceCountByMember[selectedId] || 0;
+      if (count > 0) {
+        const selectedName = registerSelect.options[registerSelect.selectedIndex].text;
+        registerWarnMessage.textContent =
+          "⚠️ " +
+          selectedName +
+          " さんはすでに他の端末（" +
+          count +
+          "台）でパスキーが登録されています。このまま実行すると、現在の端末も追加登録されます。";
+        registerWarnMessage.style.display = "block";
+      } else {
+        registerWarnMessage.style.display = "none";
+        registerWarnMessage.textContent = "";
+      }
+    }
 
     function resetRegisterScreenState() {
       registerBadge.textContent = "初回・端末登録";
@@ -403,6 +460,10 @@
 
       registerSelectGroup.style.display = "block";
       btnDoRegister.style.display = "flex";
+      btnBackLogin.style.display = "block";
+
+      registerWarnMessage.style.display = "none";
+      registerWarnMessage.textContent = "";
 
       registerErrorMessage.style.display = "none";
       registerErrorMessage.textContent = "";
@@ -438,13 +499,16 @@
       loginScreen.classList.add("hidden");
       loginFooter.classList.add("hidden");
       registerScreen.classList.remove("hidden");
+      updateDuplicateWarning();
     }
 
     function showRegisterDone() {
-      if (!registerSelect.value) {
-        registerSelect.value = "internal_id_001";
-      }
+      const selectedId = registerSelect.value;
       const selectedName = registerSelect.options[registerSelect.selectedIndex].text;
+
+      /* 画面テスト用に登録台数を+1更新 */
+      registeredDeviceCountByMember[selectedId] =
+        (registeredDeviceCountByMember[selectedId] || 0) + 1;
 
       registerBadge.textContent = "登録完了";
       registerBadge.className = "screen-badge badge-result";
@@ -453,7 +517,10 @@
       registerHeading.className = "screen-heading heading-result-red";
 
       registerSelectGroup.style.display = "none";
+      registerWarnMessage.style.display = "none";
       btnDoRegister.style.display = "none";
+      /* 完了画面では「← ログイン画面に戻る」を非表示にし、「このままログインする」1択にする */
+      btnBackLogin.style.display = "none";
 
       registerDoneBanner.textContent = selectedName + " さんのパスキー登録が完了しました";
       registerDoneBanner.style.display = "block";
@@ -462,7 +529,8 @@
     }
 
     document.getElementById("btn-go-register").addEventListener("click", showRegisterScreen);
-    document.getElementById("btn-back-login").addEventListener("click", () => showLoginScreen());
+    btnBackLogin.addEventListener("click", () => showLoginScreen());
+    registerSelect.addEventListener("change", updateDuplicateWarning);
 
     document.getElementById("btn-do-login").addEventListener("click", () => {
       loginMessage.style.display = "none";
